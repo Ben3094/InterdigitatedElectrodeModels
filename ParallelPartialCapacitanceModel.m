@@ -1,4 +1,4 @@
-function [C] = ParallelPartialCapacitanceModel(firstHalfPlaneEpsilons, firstHalfPlaneHeights, secondHalfPlaneEpsilons, secondHalfPlaneHeights, fingers, interFingerLength, interFingerWidth, fingerWidth)
+function [C] = ParallelPartialCapacitanceModel(firstHalfPlaneEpsilons, firstHalfPlaneHeights, secondHalfPlaneEpsilons, secondHalfPlaneHeights, fingers, fingerLength, interFingerWidth, fingerWidth)
 %ParallelPartialCapacitanceModel Summary of this function goes here
 %   According to R. Igreja and C. J. Dias, ?Extension to the analytical model of the interdigital electrodes capacitance for a multi-layered structure,? Sensors and Actuators A: Physical, vol. 172, no. 2, pp. 392?399, Dec. 2011, doi: 10.1016/j.sna.2011.09.033.
 
@@ -7,8 +7,8 @@ function [C] = ParallelPartialCapacitanceModel(firstHalfPlaneEpsilons, firstHalf
     
     %% VARIABLES CHECKING
         % First half plane
-        assert(any(size(firstHalfPlaneEpsilons) ~= 1), 'firstHalfPlaneEpsilons need to be unidimentional');
-        assert(any(size(firstHalfPlaneHeights) ~= 1), 'firstHalfPlaneHeights need to be unidimentional');
+%         assert(any(size(firstHalfPlaneEpsilons) ~= 1), 'firstHalfPlaneEpsilons need to be unidimentional');
+%         assert(any(size(firstHalfPlaneHeights) ~= 1), 'firstHalfPlaneHeights need to be unidimentional');
         assert(length(firstHalfPlaneEpsilons) == length(firstHalfPlaneHeights), 'firstHalfPlaneEpsilons must be the same size as firstHalfPlaneHeights');
 
             % Check if epsillon increase monotonicaly
@@ -17,8 +17,8 @@ function [C] = ParallelPartialCapacitanceModel(firstHalfPlaneEpsilons, firstHalf
             end
                 
         % Second half plane
-        assert(any(size(secondHalfPlaneEpsilons) ~= 1), 'secondHalfPlaneEpsilons need to be unidimentional');
-        assert(any(size(secondHalfPlaneHeights) ~= 1), 'secondHalfPlaneHeights need to be unidimentional');
+%         assert(any(size(secondHalfPlaneEpsilons) ~= 1), 'secondHalfPlaneEpsilons need to be unidimentional');
+%         assert(any(size(secondHalfPlaneHeights) ~= 1), 'secondHalfPlaneHeights need to be unidimentional');
         assert(length(secondHalfPlaneEpsilons) == length(secondHalfPlaneHeights), 'secondHalfPlaneEpsilons must be the same size as secondHalfPlaneHeights');
 
             % Check if epsillon increase monotonicaly
@@ -30,7 +30,7 @@ function [C] = ParallelPartialCapacitanceModel(firstHalfPlaneEpsilons, firstHalf
     fingers = round(abs(fingers));
     firstHalfPlaneHeights= abs(firstHalfPlaneHeights);
     secondHalfPlaneHeights = abs(secondHalfPlaneHeights);
-    interFingerLength = abs(interFingerLength);
+    fingerLength = abs(fingerLength);
     interFingerWidth = abs(interFingerWidth);
     fingerWidth = abs(fingerWidth);
     
@@ -40,16 +40,18 @@ function [C] = ParallelPartialCapacitanceModel(firstHalfPlaneEpsilons, firstHalf
     
     % Compute interior electrodes in void
     kIInfinite = sin(pi*nu/2);
-    infiniteInteriorAirLayerCapacitance = voidPermittivity*interFingerLength*ellipke(kIInfinite)/ellipke(primeComputation(kIInfinite));
+    infiniteInteriorAirLayerCapacitance = voidPermittivity*fingerLength*ellipke(kIInfinite)/ellipke(primeComputation(kIInfinite));
     
     % Compute exterior electrodes in void
     kEInfinite = 2*sqrt(nu)/(1+nu);
-    infiniteExteriorAirLayerCapacitance = voidPermittivity*interFingerLength*ellipke(kEInfinite)/ellipke(primeComputation(kEInfinite));
+    infiniteExteriorAirLayerCapacitance = voidPermittivity*fingerLength*ellipke(kEInfinite)/ellipke(primeComputation(kEInfinite));
    
     C = partialCapacitanceComputation(firstHalfPlaneEpsilons, firstHalfPlaneHeights) + partialCapacitanceComputation(secondHalfPlaneEpsilons, secondHalfPlaneHeights);
     
     function [partialCapacitance] = partialCapacitanceComputation(halfPlaneEpsilons, halfPlaneHeights)
-        % Compuute coefficients dependent on correponding layer height
+        halfPlaneEpsilons = [halfPlaneEpsilons, 1]; % Add air layer
+        
+        % Compute coefficients dependent on correponding layer height
         r = halfPlaneHeights/lambda;
         q = exp(-4*pi*r);
         k = (theta(2, 0, q)/theta(3, 0, q))^2;
@@ -58,20 +60,18 @@ function [C] = ParallelPartialCapacitanceModel(firstHalfPlaneEpsilons, firstHalf
         [t2, ~, ~] = ellipj(ellipke(k)*nu, k);
         t4 = 1/k;
         kI = t2*sqrt((t4^2 - 1)/(t4^2 - t2^2));
-        halfPlaneEpsilons = [halfPlaneEpsilons, 1];
         partialInteriorCapacitance = infiniteInteriorAirLayerCapacitance;
-        for i = 1:length(halfPlaneEpsilons - 1)
-            partialInteriorCapacitance = partialInteriorCapacitance + (halfPlaneEpsilons(i)-halfPlaneEpsilons(i+1))*voidPermittivity*interFingerLength*ellipke(kI(i))/ellipke(primeComputation(kI(i)));
+         for i = 1:(length(halfPlaneEpsilons) - 1)
+            partialInteriorCapacitance = partialInteriorCapacitance + (halfPlaneEpsilons(i)-halfPlaneEpsilons(i+1))*voidPermittivity*fingerLength*ellipke(kI(i))/ellipke(primeComputation(kI(i)));
         end
         
         % Compute internal capacitance
         t3 = cosh(pi*(1-nu)/(8*r));
         t4 = cosh(pi*(nu+1)/(8*r));
         kE = sqrt((t4^2 - t3^2)/(t4^2 - 1)) / t3;
-        halfPlaneEpsilons = [halfPlaneEpsilons, 1];
         partialExteriorCapacitance = infiniteExteriorAirLayerCapacitance;
-        for i = 1:length(halfPlaneEpsilons - 1)
-            partialExteriorCapacitance = partialExteriorCapacitance + (halfPlaneEpsilons(i)-halfPlaneEpsilons(i+1))*voidPermittivity*interFingerLength*ellipke(kE(i))/ellipke(primeComputation(kE(i)));
+        for i = 1:(length(halfPlaneEpsilons) - 1)
+            partialExteriorCapacitance = partialExteriorCapacitance + (halfPlaneEpsilons(i)-halfPlaneEpsilons(i+1))*voidPermittivity*fingerLength*ellipke(kE(i))/ellipke(primeComputation(kE(i)));
         end
         
     
