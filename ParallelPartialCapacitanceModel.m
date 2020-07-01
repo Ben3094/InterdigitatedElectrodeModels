@@ -1,7 +1,7 @@
 function [C] = ParallelPartialCapacitanceModel(upperHalfPlaneEpsilons, upperHalfPlaneHeights, lowerHalfPlaneEpsilons, lowerHalfPlaneHeights, fingers, fingerLength, interFingerWidth, fingerWidth, upperHalfPlaneSurrondingEpsilon, lowerHalfPlaneSurrondingEpsilon)
 %ParallelPartialCapacitanceModel Compute parallel partial capacitance model for interdigitated electrodes with multiple material layers
 % According to R. Igreja and C. J. Dias, ?Extension to the analytical model of the interdigital electrodes capacitance for a multi-layered structure,? Sensors and Actuators A: Physical, vol. 172, no. 2, pp. 392?399, Dec. 2011, doi: 10.1016/j.sna.2011.09.033.
-% Moiseev Igor (2020). Elliptic Integrals and Functions (https://www.mathworks.com/matlabcentral/fileexchange/8805-elliptic-integrals-and-functions), MATLAB Central File Exchange. Retrieved July 1, 2020.
+% Uses the package of Moiseev Igor (2020). Elliptic Integrals and Functions (https://www.mathworks.com/matlabcentral/fileexchange/8805-elliptic-integrals-and-functions), MATLAB Central File Exchange. Retrieved July 1, 2020.
 
     %% CONSTANTS
     voidPermittivity = 8.85418782e-12;
