@@ -47,7 +47,7 @@ for i = 1:length(sensitiveLayerThickness)
 end
 figure
 hold on
-title('Igreja and Dias PPC model')
+title('Model')
 xlabel('Sensitive layer thickness (m)');
 ylabel('Capacitance (F)');
 plot(sensitiveLayerThickness, minCapacitances);
@@ -59,11 +59,11 @@ deltaCapacitances = zeros(length(minCapacitances), 1);
 for i = 1:length(minCapacitances)
     deltaCapacitances(i) = maxCapacitances(i) - minCapacitances(i);
 end
-% figure
-% plot(sensitiveLayerThickness, deltaCapacitances/deltaSensitiveLayerEpsillon);
-% title('Igreja and Dias PPC model sensitivity')
-% xlabel('Sensitive layer thickness (m)');
-% ylabel('Sensibility (F/(F/m))');
+figure
+plot(sensitiveLayerThickness, deltaCapacitances/deltaSensitiveLayerEpsillon);
+title('Model sensitivity')
+xlabel('Sensitive layer thickness (m)');
+ylabel('Sensibility (F/(F/m))');
 
 sensitivities = zeros(length(minCapacitances)-1, 1);
 for i = 1:length(minCapacitances)-1
@@ -71,7 +71,7 @@ for i = 1:length(minCapacitances)-1
 end
 figure
 plot(sensitiveLayerThickness(2:end), sensitivities);
-title('Igreja and Dias PPC model sensitivity')
+title('Model sensitivity slew rate')
 xlabel('Sensitive layer thickness (m)');
 ylabel('Sensibility (F/m)');
 
@@ -86,7 +86,7 @@ for i = 1:length(interFingerWidths)
 end
 figure
 hold on
-title('Igreja and Dias PPC model')
+title('Model')
 xlabel('Inter-finger widths (m)');
 ylabel('Capacitance (F)');
 plot(interFingerWidths, minCapacitances);
@@ -98,11 +98,11 @@ deltaCapacitances = zeros(length(minCapacitances), 1);
 for i = 1:length(minCapacitances)
     deltaCapacitances(i) = maxCapacitances(i) - minCapacitances(i);
 end
-% figure
-% plot(interFingerWidths, deltaCapacitances/deltaSensitiveLayerEpsillon);
-% title('Igreja and Dias PPC model sensitivity')
-% xlabel('Inter-finger widths (m)');
-% ylabel('Sensibility (F/(F/m))');
+figure
+plot(interFingerWidths, deltaCapacitances/deltaSensitiveLayerEpsillon);
+title('Model sensitivity')
+xlabel('Inter-finger widths (m)');
+ylabel('Sensibility (F/(F/m))');
 
 sensitivities = zeros(length(minCapacitances)-1, 1);
 for i = 1:length(minCapacitances)-1
@@ -110,7 +110,7 @@ for i = 1:length(minCapacitances)-1
 end
 figure
 plot(interFingerWidths(2:end), sensitivities);
-title('Igreja and Dias PPC model sensitivity')
+title('Model sensitivity slew rate')
 xlabel('Inter-finger widths (m)');
 ylabel('Sensibility (F/m)');
 
@@ -125,7 +125,7 @@ for i = 1:length(fingers)
 end
 figure
 hold on
-title('Igreja and Dias PPC model')
+title('Model')
 xlabel('Fingers');
 ylabel('Capacitance (F)');
 plot(fingers, minCapacitances);
@@ -137,11 +137,11 @@ deltaCapacitances = zeros(length(minCapacitances), 1);
 for i = 1:length(minCapacitances)
     deltaCapacitances(i) = maxCapacitances(i) - minCapacitances(i);
 end
-% figure
-% plot(fingers, deltaCapacitances/deltaSensitiveLayerEpsillon);
-% title('Igreja and Dias PPC model sensitivity')
-% xlabel('Fingers');
-% ylabel('Sensibility (F/(F/m))');
+figure
+plot(fingers, deltaCapacitances/deltaSensitiveLayerEpsillon);
+title('Model sensitivity')
+xlabel('Fingers');
+ylabel('Sensibility (F/(F/m))');
 
 sensitivities = zeros(length(minCapacitances)-1, 1);
 for i = 1:length(minCapacitances)-1
@@ -149,7 +149,7 @@ for i = 1:length(minCapacitances)-1
 end
 figure
 plot(fingers(2:end), sensitivities);
-title('Igreja and Dias PPC model sensitivity')
+title('Model sensitivity slew rate')
 xlabel('Fingers');
 ylabel('Sensibility (F)');
 
@@ -164,7 +164,7 @@ for i = 1:length(fingerLengths)
 end
 figure
 hold on
-title('Igreja and Dias PPC model')
+title('Model')
 xlabel('Fingers length (m)');
 ylabel('Capacitance (F)');
 plot(fingerLengths, minCapacitances);
@@ -176,11 +176,11 @@ deltaCapacitances = zeros(length(minCapacitances), 1);
 for i = 1:length(minCapacitances)
     deltaCapacitances(i) = maxCapacitances(i) - minCapacitances(i);
 end
-% figure
-% plot(fingerLengths, deltaCapacitances/deltaSensitiveLayerEpsillon);
-% title('Igreja and Dias PPC model sensitivity')
-% xlabel('Fingers length (m)');
-% ylabel('Sensibility (F/(F/m))');
+figure
+plot(fingerLengths, deltaCapacitances/deltaSensitiveLayerEpsillon);
+title('Model sensitivity')
+xlabel('Fingers length (m)');
+ylabel('Sensibility (F/(F/m))');
 
 sensitivities = zeros(length(minCapacitances)-1, 1);
 for i = 1:length(minCapacitances)-1
@@ -188,6 +188,6 @@ for i = 1:length(minCapacitances)-1
 end
 figure
 plot(fingerLengths(2:end), sensitivities);
-title('Igreja and Dias PPC model sensitivity')
+title('Model sensitivity slew rate')
 xlabel('Fingers length (m)');
 ylabel('Sensibility (F/m)');

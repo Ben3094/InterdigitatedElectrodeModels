@@ -6,13 +6,17 @@ substrateEpsillon = 3.225;
 substrateThickness = 50e-6;
 
 interlayerEpsillon = 3.225;
-interlayerThickness = 100e-6;
+minInterlayerThickness = 25e-6;
+maxInterlayerThickness = 100e-6;
+deltaInterlayerThickness = 5e-6;
+interlayerThickness = minInterlayerThickness:deltaInterlayerThickness:maxInterlayerThickness;
+meanInterlayerThickness = (maxInterlayerThickness - minInterlayerThickness)/2;
 
 minSensitiveLayerEpsillon = 5.020823;
 maxSensitiveLayerEpsillon = 12;
 deltaSensitiveLayerEpsillon = maxSensitiveLayerEpsillon - minSensitiveLayerEpsillon;
 
-minSensitiveLayerThickness = 5e-6;
+minSensitiveLayerThickness = 1e-6;
 maxSensitiveLayerThickness = 50e-6;
 deltaSensitiveLayerThickness = 1e-6;
 sensitiveLayerThickness = minSensitiveLayerThickness:deltaSensitiveLayerThickness:maxSensitiveLayerThickness;
@@ -41,13 +45,13 @@ minCapacitances = zeros(length(sensitiveLayerThickness), 1);
 maxCapacitances = zeros(length(sensitiveLayerThickness), 1);
 meanCapacitances = zeros(length(sensitiveLayerThickness), 1);
 for i = 1:length(sensitiveLayerThickness)
-    minCapacitances(i) = ParallelPartialCapacitanceModel(substrateEpsillon, substrateThickness, [interlayerEpsillon minSensitiveLayerEpsillon], [interlayerThickness interlayerThickness+sensitiveLayerThickness(i)], meanFingers, meanFingerLength, meanInterFingerWidth, meanInterFingerWidth);
-    maxCapacitances(i) = ParallelPartialCapacitanceModel(substrateEpsillon, substrateThickness, [interlayerEpsillon maxSensitiveLayerEpsillon], [interlayerThickness interlayerThickness+sensitiveLayerThickness(i)], meanFingers, meanFingerLength, meanInterFingerWidth, meanInterFingerWidth);
+    minCapacitances(i) = ParallelPartialCapacitanceModel(substrateEpsillon, substrateThickness, [interlayerEpsillon minSensitiveLayerEpsillon], [meanInterlayerThickness meanInterlayerThickness+sensitiveLayerThickness(i)], meanFingers, meanFingerLength, meanInterFingerWidth, meanInterFingerWidth);
+    maxCapacitances(i) = ParallelPartialCapacitanceModel(substrateEpsillon, substrateThickness, [interlayerEpsillon maxSensitiveLayerEpsillon], [meanInterlayerThickness meanInterlayerThickness+sensitiveLayerThickness(i)], meanFingers, meanFingerLength, meanInterFingerWidth, meanInterFingerWidth);
     meanCapacitances(i) = mean([minCapacitances(i), maxCapacitances(i)]);
 end
 figure
 hold on
-title('Igreja and Dias PPC model')
+title('Model')
 xlabel('Sensitive layer thickness (m)');
 ylabel('Capacitance (F)');
 plot(sensitiveLayerThickness, minCapacitances);
@@ -59,11 +63,11 @@ deltaCapacitances = zeros(length(minCapacitances), 1);
 for i = 1:length(minCapacitances)
     deltaCapacitances(i) = maxCapacitances(i) - minCapacitances(i);
 end
-% figure
-% plot(sensitiveLayerThickness, deltaCapacitances/deltaSensitiveLayerEpsillon);
-% title('Igreja and Dias PPC model sensitivity')
-% xlabel('Sensitive layer thickness (m)');
-% ylabel('Sensibility (F/(F/m))');
+figure
+plot(sensitiveLayerThickness, deltaCapacitances/deltaSensitiveLayerEpsillon);
+title('Model sensitivity')
+xlabel('Sensitive layer thickness (m)');
+ylabel('Sensibility (F/(F/m))');
 
 sensitivities = zeros(length(minCapacitances)-1, 1);
 for i = 1:length(minCapacitances)-1
@@ -71,7 +75,7 @@ for i = 1:length(minCapacitances)-1
 end
 figure
 plot(sensitiveLayerThickness(2:end), sensitivities);
-title('Igreja and Dias PPC model sensitivity')
+title('Model sensitivity slew rate')
 xlabel('Sensitive layer thickness (m)');
 ylabel('Sensibility (F/m)');
 
@@ -80,13 +84,13 @@ minCapacitances = zeros(length(interFingerWidths), 1);
 maxCapacitances = zeros(length(interFingerWidths), 1);
 meanCapacitances = zeros(length(interFingerWidths), 1);
 for i = 1:length(interFingerWidths)
-    minCapacitances(i) = ParallelPartialCapacitanceModel(substrateEpsillon, substrateThickness, [interlayerEpsillon minSensitiveLayerEpsillon], [interlayerThickness interlayerThickness+meanSensitiveLayerThickness], meanFingers, meanFingerLength, interFingerWidths(i), interFingerWidths(i));
-    maxCapacitances(i) = ParallelPartialCapacitanceModel(substrateEpsillon, substrateThickness, [interlayerEpsillon maxSensitiveLayerEpsillon], [interlayerThickness interlayerThickness+meanSensitiveLayerThickness], meanFingers, meanFingerLength, interFingerWidths(i), interFingerWidths(i));
+    minCapacitances(i) = ParallelPartialCapacitanceModel(substrateEpsillon, substrateThickness, [interlayerEpsillon minSensitiveLayerEpsillon], [meanInterlayerThickness meanInterlayerThickness+meanSensitiveLayerThickness], meanFingers, meanFingerLength, interFingerWidths(i), interFingerWidths(i));
+    maxCapacitances(i) = ParallelPartialCapacitanceModel(substrateEpsillon, substrateThickness, [interlayerEpsillon maxSensitiveLayerEpsillon], [meanInterlayerThickness meanInterlayerThickness+meanSensitiveLayerThickness], meanFingers, meanFingerLength, interFingerWidths(i), interFingerWidths(i));
     meanCapacitances(i) = mean([minCapacitances(i), maxCapacitances(i)]);
 end
 figure
 hold on
-title('Igreja and Dias PPC model')
+title('Model')
 xlabel('Inter-finger widths (m)');
 ylabel('Capacitance (F)');
 plot(interFingerWidths, minCapacitances);
@@ -98,11 +102,11 @@ deltaCapacitances = zeros(length(minCapacitances), 1);
 for i = 1:length(minCapacitances)
     deltaCapacitances(i) = maxCapacitances(i) - minCapacitances(i);
 end
-% figure
-% plot(interFingerWidths, deltaCapacitances/deltaSensitiveLayerEpsillon);
-% title('Igreja and Dias PPC model sensitivity')
-% xlabel('Inter-finger widths (m)');
-% ylabel('Sensibility (F/(F/m))');
+figure
+plot(interFingerWidths, deltaCapacitances/deltaSensitiveLayerEpsillon);
+title('Model sensitivity')
+xlabel('Inter-finger widths (m)');
+ylabel('Sensibility (F/(F/m))');
 
 sensitivities = zeros(length(minCapacitances)-1, 1);
 for i = 1:length(minCapacitances)-1
@@ -110,7 +114,45 @@ for i = 1:length(minCapacitances)-1
 end
 figure
 plot(interFingerWidths(2:end), sensitivities);
-title('Igreja and Dias PPC model sensitivity')
+title('Model sensitivity slew rate')
 xlabel('Inter-finger widths (m)');
 ylabel('Sensibility (F/m)');
 
+%% inter-layer thickness sweep
+minCapacitances = zeros(length(interlayerThickness), 1);
+maxCapacitances = zeros(length(interlayerThickness), 1);
+meanCapacitances = zeros(length(interlayerThickness), 1);
+for i = 1:length(interlayerThickness)
+    minCapacitances(i) = ParallelPartialCapacitanceModel(substrateEpsillon, substrateThickness, [interlayerEpsillon minSensitiveLayerEpsillon], [interlayerThickness(i) interlayerThickness(i)+meanSensitiveLayerThickness], meanFingers, meanFingerLength, meanInterFingerWidth, meanInterFingerWidth);
+    maxCapacitances(i) = ParallelPartialCapacitanceModel(substrateEpsillon, substrateThickness, [interlayerEpsillon maxSensitiveLayerEpsillon], [interlayerThickness(i) interlayerThickness(i)+meanSensitiveLayerThickness], meanFingers, meanFingerLength, meanInterFingerWidth, meanInterFingerWidth);
+    meanCapacitances(i) = mean([minCapacitances(i), maxCapacitances(i)]);
+end
+figure
+hold on
+title('Model')
+xlabel('Inter-layer thickness (m)');
+ylabel('Capacitance (F)');
+plot(interlayerThickness, minCapacitances);
+plot(interlayerThickness, meanCapacitances, '--');
+plot(interlayerThickness, maxCapacitances);
+legend('Min', 'Mean', 'Max');
+
+deltaCapacitances = zeros(length(minCapacitances), 1);
+for i = 1:length(minCapacitances)
+    deltaCapacitances(i) = maxCapacitances(i) - minCapacitances(i);
+end
+figure
+plot(interlayerThickness, deltaCapacitances/deltaSensitiveLayerEpsillon);
+title('Model sensitivity')
+xlabel('Inter-layer thickness (m)');
+ylabel('Sensibility (F/(F/m))');
+
+sensitivities = zeros(length(minCapacitances)-1, 1);
+for i = 1:length(minCapacitances)-1
+    sensitivities(i) = (deltaCapacitances(i+1) - deltaCapacitances(i)) / (interlayerThickness(i+1) - interlayerThickness(i));
+end
+figure
+plot(interlayerThickness(2:end), sensitivities);
+title('Model sensitivity slew rate')
+xlabel('Inter-layer thickness (m)');
+ylabel('Sensibility (F/m)');
